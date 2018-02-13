@@ -16,7 +16,7 @@ else
     <?php endif ?>
     <h2 class="subheader"><?= $this->e($ticket->name) ?></h2>
     <?php
-        if ($ticket->assigned_to == 0){
+        if ($ticket->assigned_to == 0){ 
         ?>
         <h3 style="color:red;">Unassigned</h3>
     <?php
