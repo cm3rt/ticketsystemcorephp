@@ -71,14 +71,15 @@ class TicketModel extends Model {
         $this->db->beginTransaction();
 
         try {
-            $sql = 'INSERT INTO tickets (name, description, code,  user_id) ' .
-                'VALUES (:name, :description,:code,:user_id)';
+            $sql = 'INSERT INTO tickets (name, description, code,  user_id, assigned_to) ' .
+                'VALUES (:name, :description,:code,:user_id, :assigned_to)';
             $query = $this->db->prepare($sql);
             $query->bindValue(':name', $ticket->name);
             $query->bindValue(':description', $ticket->description);
             $code = $this->getFreeCode();
             $query->bindValue(':code', $code);
             $query->bindValue(':user_id', $userId);
+            $query->bindValue(':assigned_to', $ticket->assign_to);
 
             $result = $query->execute();
 
@@ -142,17 +143,19 @@ class TicketModel extends Model {
 
     public function update($ticket) {
         $this->db->beginTransaction();
+        print_r($ticket);
 
         try {
             # dont update image if not a new one is given
-            $sql = 'UPDATE tickets SET name = :name, description = :description  WHERE id = :id';
+            $sql = 'UPDATE tickets SET name = :name, description = :description, assigned_to = :assigned_to  WHERE id = :id';
             if($ticket->image != null) {
-                $sql = 'UPDATE tickets SET name = :name, description = :description WHERE id = :id';
+                $sql = 'UPDATE tickets SET name = :name, description = :description, assigned_to = :assigned_to WHERE id = :id';
             }
             $query = $this->db->prepare($sql);
             $query->bindValue(':name', $ticket->name);
             $query->bindValue(':description', $ticket->description);
             $query->bindValue(':id', $ticket->id);
+            $query->bindValue(':assigned_to', $ticket->assign_to);
             $result = $query->execute();
 
 

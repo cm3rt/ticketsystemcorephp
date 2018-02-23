@@ -1,14 +1,10 @@
 <?php foreach(array_chunk($tickets, $ticketsPerRow) as $row): ?>
     <ul class="small-block-grid-<?= $ticketsPerRow ?>">
-        <?php foreach($row as $ticket): ?>
+        <?php foreach($row as $ticket): if ($ticket->assigned_to == $_SESSION['user_id']) {?>
             <li>
                 <div class="thumbnail">
                     <?php $url ="?c=listings&a=ticket&code=" . $ticket->code ?>
-                    <a href="<?= $url ?>">
-                        <img src="?c=listings&a=ticketImage&code=<?= $ticket->code ?>"
-                             alt="Ticket Image <?= $this->e($ticket->name) ?>"
-                             title="Ticket Image <?= $this->e($ticket->name) ?>"/>
-                    </a>
+                    
                     <div class="panel">
                         <a href="<?= $url ?>">
                             <h5><?= $this->e($ticket->name) ?></h5>
@@ -22,6 +18,6 @@
                     </div>
                 </div>
             </li>
-        <?php endforeach ?>
+        <?php } endforeach ?>
     </ul>
 <?php endforeach ?>

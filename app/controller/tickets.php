@@ -19,10 +19,12 @@ class TicketsController extends Controller {
     }
 
     public function build() {
+                        $users = $this->getModel('Ticket')->getAllUsers();
+
         $ticket = (object)['name' => '', 'description' => '', 'price' => '0.0', 'tags' => '', 'is_hidden' => 0];
         
 
-        $this->renderTemplate('tickets/build.php', ['ticket' => $ticket, 'shippingOptions' => '']);
+        $this->renderTemplate('tickets/build.php', ['ticket' => $ticket, 'shippingOptions' => '', 'users'=>$users]);
     }
 
     public function create() {
@@ -31,14 +33,17 @@ class TicketsController extends Controller {
         # check for existence & format of input params
         $this->accessDeniedUnless(isset($this->post['name']) && is_string($this->post['name']) && mb_strlen($this->post['name']) >= 3);
         $this->accessDeniedUnless(isset($this->post['description']) && is_string($this->post['description']) && mb_strlen($this->post['description']) >= 0);
-        
+//        $this->accessDeniedUnless(isset($this->post['assign_to']) && mb_strlen($this->post['assign_to']) >= 0);
+        $users = $this->getModel('Ticket')->getAllUsers();
 
         # verify shipping options
         $validShippingOptions = [];
         
 
         $ticket = (object)['name' => $this->post['name'],
-            'description' => $this->post['description']];
+            'description' => $this->post['description'],
+             'assign_to' =>$this->post['assign_to']
+                          ];
 
 
         $errorMessage = '';
@@ -62,21 +67,20 @@ class TicketsController extends Controller {
         }
         else {
             $this->renderTemplate('tickets/build.php', ['ticket' => $ticket,
-                'error' => $errorMessage ]);
+                'error' => $errorMessage ,
+                                                       'users'=>$users]);
         }
     }
 
     public function edit() {
         # check for existence & format of input params
         $this->accessDeniedUnless(isset($this->get['code']) && is_string($this->get['code']));
-
+        $users = $this->getModel('Ticket')->getAllUsers();
         # check that ticket belongs to user
         $ticketModel = $this->getModel('Ticket');
         $ticket = $ticketModel->getOneOfUser($this->user->id, $this->get['code']);
         $this->notFoundUnless($ticket);
-
-
-        $this->renderTemplate('tickets/edit.php', ['ticket' => $ticket]);
+        $this->renderTemplate('tickets/edit.php', ['ticket' => $ticket, 'users'=>$users]);
     }
 
     public function update() {
@@ -84,16 +88,18 @@ class TicketsController extends Controller {
         $this->accessDeniedUnless(isset($this->post['code']) && is_string($this->post['code']));
         $this->accessDeniedUnless(isset($this->post['name']) && is_string($this->post['name']) && mb_strlen($this->post['name']) >= 3);
         $this->accessDeniedUnless(isset($this->post['description']) && is_string($this->post['description']) && mb_strlen($this->post['description']) >= 0);
-
+        
         # check that ticket belongs to user
         $ticketModel = $this->getModel('Ticket');
         $ticket = $ticketModel->getOneOfUser($this->user->id, $this->post['code']);
         $this->notFoundUnless($ticket);
+        $users = $this->getModel('Ticket')->getAllUsers();
 
 
 
         $ticket->name = $this->post['name'];
         $ticket->description = $this->post['description'];
+        $ticket->assign_to = $this->post['assign_to'];
 
         $errorMessage = '';
 
@@ -102,6 +108,7 @@ class TicketsController extends Controller {
 
         if(empty($errorMessage)) {
                 $ticketModel = $this->getModel('Ticket');
+
 
                 if ($ticketModel->update($ticket)) {
                     $success = true;
@@ -117,7 +124,8 @@ class TicketsController extends Controller {
         }
         else {
             $this->renderTemplate('tickets/edit.php', ['ticket' => $ticket,
-                'error' => $errorMessage ]);
+                'error' => $errorMessage,
+                 'users'=>$users]);
         }
     }
 

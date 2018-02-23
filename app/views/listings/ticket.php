@@ -46,6 +46,7 @@ else
             <h5>Comments</h5>
             
             <?php
+            if (sizeof($comments > 0))
         foreach ($comments as $comment){?>
         
             <?= $comment->name  ?>: <?= $comment->comment  ?><br />
@@ -55,15 +56,36 @@ else
     </div>
     <hr/>
     
+    <?php if ($ticket->assigned_to == $_SESSION['user_id']){
+            ?>
+            
+        <form action="?c=orders&a=create" method="post" class="row">
+
+                <div class="large-3 columns">
+                    <label for="description" class="right inline">Add Comment</label>
+                </div>
+                <div class="large-9 columns">
+                    <textarea name="description"
+                              rows="6"
+                              placeholder="Please put detailled ticket description here."
+                              required="true"
+                              title="Will be shown on ticket page"><?= $this->e($ticket->description) ?></textarea>
+                </div>
+            <div class="small-2 columns">
+            <input type="submit" class="button small" value="Add Comment"/>
+            </div>
+            </form>
+    <?php
+        }?>
+    
     <form action="?c=orders&a=create" method="post" class="row">
         <input type="hidden" name="ticket_code" value="<?= $ticket->code ?>"/>
-
         
         <?php 
             if ($yours == true) {
             ?>
         <div class="small-2 columns">
-            <input type="submit" class="button success small" value="Complete"/>
+                <input type="submit" class="button success small" value="Complete"/>
         </div>
         <?php } ?>
     </form>

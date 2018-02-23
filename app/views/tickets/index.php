@@ -68,17 +68,18 @@
                     <input type="submit" value="Assign" class="button tiny"/>
                 </form>
             </td>
+            
+                <?php
+                }
+                
+
+    ?>
             <td>
     
                 <form action="?c=tickets&a=destroy" method="post">
                     <input type="hidden" name="code" value="<?= $ticket->code ?>"/>
                     <input type="submit" value="Delete" class="button tiny alert"/>
                 </form>
-                <?php
-                }
-                
-
-    ?>
                 
             </td>
         </tr>

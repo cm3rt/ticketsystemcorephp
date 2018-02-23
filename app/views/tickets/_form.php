@@ -38,6 +38,27 @@
                               title="Will be shown on ticket page"><?= $this->e($ticket->description) ?></textarea>
                 </div>
             </div>
+            
+            <div class="row">
+                <div class="large-3 columns">
+                    <label for="description" class="right inline">Assign To</label>
+                </div>
+                <div class="large-9 columns">
+                    <select name="assign_to" style="width:100px;">
+                <?php
+                    
+                    foreach($users as $user){
+                        ?>
+                    
+                    <option value="<?=$_SESSION['user_id']?>"><?=$user->name?></option>
+                <?php
+                        
+                    }
+                    ?>
+                </select>
+                </div>
+            </div>
+            
 
             <hr/>
             <div class="row">
